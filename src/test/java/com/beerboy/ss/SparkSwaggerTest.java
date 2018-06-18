@@ -1,5 +1,12 @@
 package com.beerboy.ss;
 
+import com.beerboy.ss.descriptor.EndpointDescriptor;
+import com.beerboy.ss.descriptor.MethodDescriptor;
+
+import javax.imageio.IIOException;
+
+import spark.Service;
+
 public class SparkSwaggerTest {
 
 //    @Test
@@ -8,24 +15,24 @@ public class SparkSwaggerTest {
 //
 //    }
 //
-//    public static void main(String... args) throws IIOException {
-//
-//        try {
-//            Service service = spark.Service.ignite().port(3000);
-//            SparkSwagger swagger = SparkSwagger.of(service, "conf/" + SparkSwagger.CONF_FILE_NAME);
-//
-//            swagger
-//                    .endpoint(EndpointDescriptor.endpointPath("/hello"), (a, b) -> {
-//                    })
-//                    .get(MethodDescriptor.path("/there"), (a, b) -> "response")
-//            ;
-//
-//            service.get("/foo", (a,b) -> "hey") ;
-//            swagger.generateDoc();
-//        } catch (Throwable e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public static void main(String... args) throws IIOException {
+
+        try {
+            Service service = spark.Service.ignite().port(3000);
+            SparkSwagger swagger = SparkSwagger.of(service, "conf/" + SparkSwagger.CONF_FILE_NAME);
+
+            swagger
+                    .endpoint(EndpointDescriptor.endpointPath("/hello"), (a, b) -> {
+                    })
+                    .get(MethodDescriptor.path("/there"), (a, b) -> "response")
+            ;
+
+            service.get("/foo", (a,b) -> "hey") ;
+            swagger.generateDoc();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
 //
 //    @Test
 //    public void flsdjfo() {

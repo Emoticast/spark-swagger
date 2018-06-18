@@ -121,7 +121,7 @@ public class SwaggerHammer {
 //            }
 //        }
 
-        File[] files = new File(this.getClass().getResource(prefix).getPath()).listFiles();
+        File[] files = new File(this.getClass().getClassLoader().getResource(prefix).getPath()).listFiles();
 
         for (File file : files) {
             if (!file.isDirectory()) {
