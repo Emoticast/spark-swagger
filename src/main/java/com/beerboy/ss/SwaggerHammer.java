@@ -11,14 +11,22 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author manusant
@@ -121,13 +129,31 @@ public class SwaggerHammer {
 //            }
 //        }
 
-        File[] files = new File(this.getClass().getClassLoader().getResource(prefix).getPath()).listFiles();
-
-        for (File file : files) {
-            if (!file.isDirectory()) {
-                uiFiles.add(file.getAbsoluteFile().toString());
-            }
+        URI uri = null;
+        try {
+            uri = this.getClass().getResource("").toURI();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
         }
+        Path myPath;
+        if (uri.getScheme().equals("jar")) {
+            FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
+            myPath = fileSystem.getPath("/resources");
+        } else {
+            myPath = Paths.get(uri);
+        }
+        Stream<Path> walk = Files.walk(myPath, 1);
+        for (Iterator<Path> it = walk.iterator(); it.hasNext();){
+            uiFiles.add(it.next().toString());
+        }
+
+//        File[] files = new File(this.getClass().getClassLoader().getResource(prefix).getPath()).listFiles();
+//
+//        for (File file : files) {
+//            if (!file.isDirectory()) {
+//                uiFiles.add(file.getAbsoluteFile().toString());
+//            }
+//        }
 
         return uiFiles;
     }
