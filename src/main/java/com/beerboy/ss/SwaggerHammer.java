@@ -1,8 +1,9 @@
 package com.beerboy.ss;
 
-import com.beerboy.ss.ui.UiTemplates;
 import com.beerboy.ss.conf.Theme;
+import com.beerboy.ss.ui.UiTemplates;
 import com.typesafe.config.Config;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,18 +11,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 /**
  * @author manusant
@@ -74,6 +71,7 @@ public class SwaggerHammer {
             if (file.exists()) {
                 file.delete();
             }
+            file.getParentFile().mkdirs();
             file.createNewFile();
             Files.copy(uiFile, file.getAbsoluteFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
@@ -99,6 +97,7 @@ public class SwaggerHammer {
             if (file.exists()) {
                 file.delete();
             }
+            file.getParentFile().mkdirs();
             file.createNewFile();
             Files.copy(templateFile, file.getAbsoluteFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
@@ -107,20 +106,29 @@ public class SwaggerHammer {
     private List<String> listFiles(String prefix) throws IOException {
         List<String> uiFiles = new ArrayList<>();
 
-        CodeSource src = SparkSwagger.class.getProtectionDomain().getCodeSource();
-        if (src != null) {
-            URL jar = src.getLocation();
-            ZipInputStream zip = new ZipInputStream(jar.openStream());
-            while (true) {
-                ZipEntry e = zip.getNextEntry();
-                if (e == null)
-                    break;
-                String name = e.getName();
-                if (name.startsWith(prefix)) {
-                    uiFiles.add(name);
-                }
+//        CodeSource src = SparkSwagger.class.getProtectionDomain().getCodeSource();
+//        if (src != null) {
+//            URL jar = src.getLocation();
+//            ZipInputStream zip = new ZipInputStream(jar.openStream());
+//            while (true) {
+//                ZipEntry e = zip.getNextEntry();
+//                if (e == null)
+//                    break;
+//                String name = e.getName();
+//                if (name.startsWith(prefix)) {
+//                    uiFiles.add(name);
+//                }
+//            }
+//        }
+
+        File[] files = new File(ClassLoader.getSystemResource(prefix).getPath()).listFiles();
+
+        for (File file : files) {
+            if (!file.isDirectory()) {
+                uiFiles.add(file.getAbsoluteFile().toString());
             }
         }
+
         return uiFiles;
     }
 

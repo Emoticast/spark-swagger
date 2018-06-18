@@ -5,17 +5,18 @@ import com.beerboy.spark.typify.spec.IgnoreSpec;
 import com.beerboy.ss.conf.IpResolver;
 import com.beerboy.ss.conf.VersionResolver;
 import com.beerboy.ss.descriptor.EndpointDescriptor;
-import com.beerboy.ss.model.*;
+import com.beerboy.ss.model.Contact;
+import com.beerboy.ss.model.ExternalDocs;
+import com.beerboy.ss.model.Info;
+import com.beerboy.ss.model.License;
+import com.beerboy.ss.model.Scheme;
 import com.beerboy.ss.rest.Endpoint;
 import com.beerboy.ss.rest.EndpointResolver;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.ExceptionHandler;
-import spark.Filter;
-import spark.HaltException;
-import spark.Service;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,6 +24,11 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import spark.ExceptionHandler;
+import spark.Filter;
+import spark.HaltException;
+import spark.Service;
 
 /**
  * @author manusant
@@ -53,7 +59,8 @@ public class SparkSwagger {
 
     private void configDocRoute() {
         // Configure static mapping
-        String uiFolder = SwaggerHammer.getUiFolder(this.apiPath);
+        String baseUiFolder = SwaggerHammer.getUiFolder(this.apiPath);
+        String uiFolder = baseUiFolder.replaceAll(this.apiPath, "");
         SwaggerHammer.createDir(SwaggerHammer.getSwaggerUiFolder());
         SwaggerHammer.createDir(uiFolder);
         spark.externalStaticFileLocation(uiFolder);
