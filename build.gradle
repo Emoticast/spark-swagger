@@ -1,31 +1,53 @@
+buildscript {
+    ext.kotlin_version = '1.2.41'
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
 apply plugin: 'java'
+apply plugin: 'kotlin'
 apply plugin: 'maven'
 
 group = 'com.beerboy.ss'
 version = '1.0.0.47'
 
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
 tasks.withType(JavaCompile) {
-	options.encoding = 'UTF-8'
+    options.encoding = 'UTF-8'
 }
 
 repositories {
-     maven { url "https://packagecloud.io/manusant/beerRepo/maven2" }
-     maven { url "http://repo.maven.apache.org/maven2" }
+    maven { url "https://packagecloud.io/manusant/beerRepo/maven2" }
+    maven { url "http://repo.maven.apache.org/maven2" }
 }
 
 dependencies {
-    compile group: 'com.beerboy.spark', name: 'spark-typify', version:'1.0.0.3'
-    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version:'2.9.2'
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version:'2.8.0'
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:'2.8.2'
-    compile group: 'com.typesafe', name: 'config', version:'1.3.3'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version:'2.7'
-    compile group: 'com.sparkjava', name: 'spark-core', version:'2.5.5'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    compile 'ch.qos.logback:logback-classic:1.1.7'
+    compile group: 'com.beerboy.spark', name: 'spark-typify', version: '1.0.0.3'
+    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.9.2'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.8.0'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.2'
+    compile group: 'com.typesafe', name: 'config', version: '1.3.3'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.7'
+    compile group: 'com.sparkjava', name: 'spark-core', version: '2.5.5'
 
-    testCompile group: 'junit', name: 'junit', version:'4.11'
-    testCompile group: 'org.hamcrest', name: 'hamcrest-all', version:'1.3'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
 }
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'

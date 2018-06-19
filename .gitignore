@@ -18,3 +18,4 @@ bin/.gitignore
 /logs/
 *.iml
 settings.xml
+out/
