@@ -2,7 +2,6 @@ package com.beerboy.ss;
 
 import com.beerboy.ss.conf.Theme;
 import com.beerboy.ss.ui.UiTemplates;
-import com.typesafe.config.Config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +33,7 @@ public class SwaggerHammer {
     public void prepareUi(final Config config, Swagger swagger) throws IOException {
         LOGGER.debug("Spark-Swagger: Start compiling Swagger UI");
 
-        String uiFolder = SwaggerHammer.getUiFolder(config.getString("spark-swagger.basePath"));
+        String uiFolder = SwaggerHammer.getUiFolder(config.getBasePath());
 
         // 1 - Extract UI/Templates folder to a temporary folder
         extractUi(uiFolder);
@@ -45,10 +44,10 @@ public class SwaggerHammer {
         // 3 - Save new Index to UI folder
         saveFile(uiFolder, "index.html", newIndex);
 
-        // 4 - Parse Swagger definitions and save it to UI folder
-        SwaggerParser.parseJs(swagger, uiFolder + "swagger-spec.js");
-        SwaggerParser.parseYaml(swagger, uiFolder + "doc.yaml");
-        SwaggerParser.parseJson(swagger, uiFolder + "doc.json");
+        // 4 - Serialize Swagger definitions and save it to UI folder
+        SwaggerParser.writeJs(swagger, uiFolder + "swagger-spec.js");
+        SwaggerParser.writeYaml(swagger, uiFolder + "doc.yaml");
+        SwaggerParser.writeJson(swagger, uiFolder + "doc.json");
 
         // 5 - Apply theme according to configurations
         applyTheme(uiFolder, config);
@@ -139,7 +138,7 @@ public class SwaggerHammer {
 
     private void applyTheme(String uiFolder, final Config config) throws IOException {
         LOGGER.debug("Spark-Swagger: Start applying configured CSS Theme");
-        String themeName = config.getString("spark-swagger.theme");
+        String themeName = config.getTheme().toString();
         Theme theme = Theme.fromValue(themeName);
 
         String themeCss = readFile(uiFolder, "templates/" + theme.getValue() + ".css", StandardCharsets.UTF_8);
@@ -185,18 +184,18 @@ public class SwaggerHammer {
         String currentScript = indexTemplate.substring(scriptStartIndex, scriptEndIndex);
 
         String scriptTemplate = UiTemplates.scriptTemplate();
-        scriptTemplate = setStringProperty(scriptTemplate, "docExpansion", config.getString("spark-swagger.docExpansion"), "list");
-        scriptTemplate = setPrimitiveProperty(scriptTemplate, "deepLinking", config.getString("spark-swagger.deepLinking"), false);
-        scriptTemplate = setPrimitiveProperty(scriptTemplate, "displayOperationId", config.getString("spark-swagger.displayOperationId"), false);
-        scriptTemplate = setPrimitiveProperty(scriptTemplate, "defaultModelsExpandDepth", config.getString("spark-swagger.defaultModelsExpandDepth"), 1);
-        scriptTemplate = setPrimitiveProperty(scriptTemplate, "defaultModelExpandDepth", config.getString("spark-swagger.defaultModelExpandDepth"), 1);
-        scriptTemplate = setStringProperty(scriptTemplate, "defaultModelRendering", config.getString("spark-swagger.defaultModelRendering"), "example");
-        scriptTemplate = setPrimitiveProperty(scriptTemplate, "displayRequestDuration", config.getString("spark-swagger.displayRequestDuration"), false);
-        scriptTemplate = setPrimitiveProperty(scriptTemplate, "filter", config.getString("spark-swagger.filter"), false);
-        scriptTemplate = setStringProperty(scriptTemplate, "operationsSorter", config.getString("spark-swagger.operationsSorter"), "alpha");
-        scriptTemplate = setPrimitiveProperty(scriptTemplate, "showExtensions", config.getString("spark-swagger.showExtensions"), false);
-        scriptTemplate = setPrimitiveProperty(scriptTemplate, "showCommonExtensions", config.getString("spark-swagger.showCommonExtensions"), false);
-        scriptTemplate = setStringProperty(scriptTemplate, "tagsSorter", config.getString("spark-swagger.tagsSorter"), "alpha");
+        scriptTemplate = setStringProperty(scriptTemplate, "docExpansion", config.getDocExpansion().toString(), "list");
+        scriptTemplate = setPrimitiveProperty(scriptTemplate, "deepLinking", config.getDeepLinking(), false);
+        scriptTemplate = setPrimitiveProperty(scriptTemplate, "displayOperationId", config.getDisplayOperationId(), false);
+        scriptTemplate = setPrimitiveProperty(scriptTemplate, "defaultModelsExpandDepth", config.getDefaultModelExpandDepth(), 1);
+        scriptTemplate = setPrimitiveProperty(scriptTemplate, "defaultModelExpandDepth", config.getDefaultModelExpandDepth(), 1);
+        scriptTemplate = setStringProperty(scriptTemplate, "defaultModelRendering", config.getDefaultModelRendering().toString(), "example");
+        scriptTemplate = setPrimitiveProperty(scriptTemplate, "displayRequestDuration", config.getDisplayRequestDuration(), false);
+        scriptTemplate = setPrimitiveProperty(scriptTemplate, "filter", config.getFilter(), false);
+        scriptTemplate = setStringProperty(scriptTemplate, "operationsSorter", config.getOperationsSorter(), "alpha");
+        scriptTemplate = setPrimitiveProperty(scriptTemplate, "showExtensions", config.getShowExtensions(), false);
+        scriptTemplate = setPrimitiveProperty(scriptTemplate, "showCommonExtensions", config.getShowCommonExtensions(), false);
+        scriptTemplate = setStringProperty(scriptTemplate, "tagsSorter", config.getTagsSorter(), "alpha");
         LOGGER.debug("Spark-Swagger: index.html successfully decorated");
         return indexTemplate.replace(currentScript, scriptTemplate);
     }

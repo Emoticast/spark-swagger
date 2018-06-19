@@ -18,10 +18,16 @@ object SparkSwaggerTest {
             val logger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger
             logger.level = Level.INFO
 
-            val swagger = SparkSwagger.of(service, "conf/" + SparkSwagger.CONF_FILE_NAME)
+            val swagger = SparkSwagger.of(service, Config(
+                    description = "A test",
+                    title = "Test",
+                    host = "localhost:3000",
+                    basePath = "/test",
+                    docPath = "/doc"
+            ))
 
             swagger
-                    .endpoint(EndpointDescriptor.endpointPath("/hello")) { a, b -> }
+                    .endpoint(EndpointDescriptor.endpointPath("/hello")) { _, _ -> }
                     .get(MethodDescriptor.path("/there")
                             .withQueryParam(ParameterDescriptor().apply {
                                 name = "pathname"
@@ -33,7 +39,7 @@ object SparkSwaggerTest {
                             })
                             .withResponseType(MyFoo::class)) { a, b -> "response" }
 
-            service.get("/foo") { a, b -> "hey" }
+            service.get("/foo") { _, _ -> "hey" }
             swagger.generateDoc()
         } catch (e: Throwable) {
             e.printStackTrace()

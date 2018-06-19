@@ -18,7 +18,7 @@ public class SwaggerParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SwaggerParser.class);
 
-    public static void parseYaml(final Swagger swagger, final String filePath) throws IOException {
+    public static void writeYaml(final Swagger swagger, final String filePath) throws IOException {
         LOGGER.debug("Spark-Swagger: Start parsing Swagger definitions");
         // Create an ObjectMapper mapper for YAML
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
@@ -30,7 +30,7 @@ public class SwaggerParser {
         LOGGER.debug("Spark-Swagger: Swagger definitions saved as "+filePath+" [YAML]");
     }
 
-    public static void parseJson(final Swagger swagger, final String filePath) throws IOException {
+    public static void writeJson(final Swagger swagger, final String filePath) throws IOException {
         LOGGER.debug("Spark-Swagger: Start parsing Swagger definitions");
         // Create an ObjectMapper mapper for JSON
         ObjectMapper mapper = new ObjectMapper(new JsonFactory());
@@ -41,7 +41,7 @@ public class SwaggerParser {
         LOGGER.debug("Spark-Swagger: Swagger definitions saved as "+filePath+" [JSON]");
     }
 
-    public static void parseJs(final Swagger swagger, final String filePath) throws IOException {
+    public static void writeJs(final Swagger swagger, final String filePath) throws IOException {
         LOGGER.debug("Spark-Swagger: Start parsing Swagger definitions");
         // Create an ObjectMapper mapper for JSON
         ObjectMapper mapper = new ObjectMapper(new JsonFactory());

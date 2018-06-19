@@ -9,21 +9,16 @@ import com.beerboy.ss.model.Contact;
 import com.beerboy.ss.model.ExternalDocs;
 import com.beerboy.ss.model.Info;
 import com.beerboy.ss.model.License;
-import com.beerboy.ss.model.Scheme;
 import com.beerboy.ss.rest.Endpoint;
 import com.beerboy.ss.rest.EndpointResolver;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import spark.ExceptionHandler;
 import spark.Filter;
@@ -44,12 +39,12 @@ public class SparkSwagger {
     private Config config;
     private String version;
 
-    private SparkSwagger(final Service spark, final String confPath, final String version) {
+    private SparkSwagger(final Service spark, final String version, final Config config) {
         this.spark = spark;
         this.version = version;
         this.swagger = new Swagger();
-        this.config = ConfigFactory.parseResources(confPath != null ? confPath : SparkSwagger.CONF_FILE_NAME);
-        this.apiPath = this.config.getString("spark-swagger.basePath");
+        this.config = config;
+        this.apiPath = this.config.getBasePath();
         this.swagger.setBasePath(this.apiPath);
         this.swagger.setExternalDocs(ExternalDocs.newBuilder().build());
         this.swagger.setHost(getHost());
@@ -102,12 +97,12 @@ public class SparkSwagger {
         return spark;
     }
 
-    public static SparkSwagger of(final Service spark) {
-        return new SparkSwagger(spark, null, null);
-    }
+//    public static SparkSwagger of(final Service spark) {
+//        return new SparkSwagger(spark, null, null);
+//    }
 
-    public static SparkSwagger of(final Service spark, final String confPath) {
-        return new SparkSwagger(spark, confPath, null);
+    public static SparkSwagger of(final Service spark, final Config config) {
+        return new SparkSwagger(spark, null, config);
     }
 
     public SparkSwagger version(final String version) {
@@ -188,7 +183,7 @@ public class SparkSwagger {
     }
 
     private String getHost() {
-        String host = this.config.getString("spark-swagger.host");
+        String host = this.config.getHost();
         if (host == null || host.contains("localhost") && host.split(":").length != 2) {
             throw new IllegalArgumentException("Host is required. If host name is 'localhost' you also need to specify port");
         } else if (host.contains("localhost")) {
@@ -200,53 +195,43 @@ public class SparkSwagger {
     }
 
     private Info getInfo() {
-        Config infoConfig = Optional.ofNullable(config.getConfig("spark-swagger.info")).orElseThrow(() -> new IllegalArgumentException("'spark-swagger.info' configuration is required"));
-
         if (version == null) {
-            Config projectConfig = config.getConfig("spark-swagger.info.project");
+            Project projectConfig = config.getProject();
             if (projectConfig != null) {
-                version = VersionResolver.resolveVersion(projectConfig.getString("groupId"), projectConfig.getString("artifactId"));
+                version = VersionResolver.resolveVersion(projectConfig.getGroupId(), projectConfig.getArtifactId());
             }
         }
 
-        Config externalDocConf = this.config.getConfig("spark-swagger.info.externalDoc");
+        ExternalDoc externalDocConf = this.config.getExternalDoc();
         if (externalDocConf != null) {
             ExternalDocs doc = ExternalDocs.newBuilder()
-                    .withDescription(externalDocConf.getString("description"))
-                    .withUrl(externalDocConf.getString("url"))
+                    .withDescription(externalDocConf.getDescription())
+                    .withUrl(externalDocConf.getUrl())
                     .build();
             swagger.setExternalDocs(doc);
         }
 
         Info info = new Info();
-        info.description(infoConfig.getString("description"));
+        info.description(config.getDescription());
         info.version(version);
-        info.title(infoConfig.getString("title"));
-        info.termsOfService(infoConfig.getString("termsOfService"));
+        info.title(config.getTitle());
+        info.termsOfService(config.getTermsOfService());
 
-        List<String> schemeStrings = Optional.ofNullable(infoConfig.getStringList("schemes")).orElseThrow(() -> new IllegalArgumentException("'spark-swagger.info.schemes' configuration is required"));
-        List<Scheme> schemes = schemeStrings.stream()
-                .filter(s -> Scheme.forValue(s) != null)
-                .map(Scheme::forValue)
-                .collect(Collectors.toList());
-        if (schemes.isEmpty()) {
-            throw new IllegalArgumentException("At least one Scheme mus be specified. Use 'spark-swagger.info.schemes' property. spark-swagger.info.schemes =[\"HTTP\"]");
-        }
-        swagger.schemes(schemes);
+        swagger.schemes(config.getSchemes());
 
-        Config contactConfig = this.config.getConfig("spark-swagger.info.contact");
+        ConfigContact contactConfig = this.config.getContact();
         if (contactConfig != null) {
             Contact contact = new Contact();
-            contact.name(contactConfig.getString("name"));
-            contact.email(contactConfig.getString("email"));
-            contact.url(contactConfig.getString("url"));
+            contact.name(contactConfig.getName());
+            contact.email(contactConfig.getEmail());
+            contact.url(contactConfig.getUrl());
             info.setContact(contact);
         }
-        Config licenseConfig = this.config.getConfig("spark-swagger.info.license");
+        ConfigLicense licenseConfig = this.config.getLicense();
         if (licenseConfig != null) {
             License license = new License();
-            license.name(licenseConfig.getString("name"));
-            license.url(licenseConfig.getString("url"));
+            license.name(licenseConfig.getName());
+            license.url(licenseConfig.getUrl());
             info.setLicense(license);
         }
         return info;
