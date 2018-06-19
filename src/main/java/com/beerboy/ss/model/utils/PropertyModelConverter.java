@@ -106,7 +106,7 @@ public class PropertyModelConverter {
     }
 
     private Property propertyByType(ModelImpl model) {
-        return PropertyBuilder.build(model.getType(), model.getFormat(), argsFromModel(model));
+        return PropertyBuilder.INSTANCE.build(model.getType(), model.getFormat(), argsFromModel(model));
     }
 
     private Map<PropertyBuilder.PropertyId, Object> argsFromModel(ModelImpl model) {
@@ -124,9 +124,6 @@ public class PropertyModelConverter {
         args.put(PropertyBuilder.PropertyId.VENDOR_EXTENSIONS, model.getVendorExtensions());
         return args;
     }
-
-
-
 
     public Model propertyToModel(Property property){
 

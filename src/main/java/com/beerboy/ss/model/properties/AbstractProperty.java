@@ -22,6 +22,14 @@ public abstract class AbstractProperty implements Property, Cloneable {
     protected String access;
     protected Map<String, Object> vendorExtensions = new LinkedHashMap<String, Object>();
 
+    public AbstractProperty(String name, String type) {
+        this.name = name;
+        this.type = type;
+    }
+
+    public AbstractProperty() {
+    }
+
     @Override
     public Property rename(String newName) {
         try {
