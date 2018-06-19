@@ -125,19 +125,14 @@ object DefinitionsFactory {
 
     private fun isObject(fieldClass: KClass<*>): Boolean {
         return !(fieldClass.java.isEnum
-                || fieldClass == Boolean::class.javaPrimitiveType
-                || fieldClass == Boolean::class.java
-                || fieldClass == ByteArray::class.java
-                || fieldClass == Number::class.java
-                || fieldClass == Double::class.java
-                || fieldClass == Double::class.javaPrimitiveType
-                || fieldClass == Float::class.java
-                || fieldClass == Float::class.javaPrimitiveType
-                || fieldClass == Int::class.java
-                || fieldClass == Int::class.javaPrimitiveType
-                || fieldClass == Long::class.java
-                || fieldClass == Long::class.javaPrimitiveType
-                || fieldClass == String::class.java)
+                || fieldClass == Boolean::class
+                || fieldClass == ByteArray::class
+                || fieldClass == Number::class
+                || fieldClass == Double::class
+                || fieldClass == Float::class
+                || fieldClass == Int::class
+                || fieldClass == Long::class
+                || fieldClass == String::class)
     }
 
     private fun getCollectionProperty(collectionField: KCallable<*>): Property {
