@@ -8,7 +8,8 @@ import java.util.Optional;
 public class ParameterDescriptor {
     public enum ParameterType {
         PATH,
-        QUERY
+        QUERY,
+        HEADER
     }
 
     private String name;

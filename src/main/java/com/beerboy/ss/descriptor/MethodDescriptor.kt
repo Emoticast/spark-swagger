@@ -130,6 +130,16 @@ class MethodDescriptor {
             return this
         }
 
+        fun withHeaderParam(): ParameterDescriptor.Builder {
+            return ParameterDescriptor.newBuilder(this).withType(ParameterDescriptor.ParameterType.HEADER)
+        }
+
+        fun withHeaderParam(param: ParameterDescriptor): Builder {
+            param.type = ParameterDescriptor.ParameterType.HEADER
+            this.parameters.add(param)
+            return this
+        }
+
         fun withResponses(responses: Map<String, Response>): Builder {
             this.responses = responses
             return this

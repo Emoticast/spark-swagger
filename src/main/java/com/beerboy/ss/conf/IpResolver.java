@@ -17,7 +17,7 @@ public class IpResolver {
                     .flatMap(networkInterface -> Collections.list(networkInterface.getInetAddresses()).stream())
                     .findFirst()
                     .map(InetAddress::getHostAddress)
-                    .orElseGet(() -> "localhost");
+                    .orElse("localhost");
         } catch (Exception e) {
             return "localhost";
         }

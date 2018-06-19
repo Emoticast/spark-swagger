@@ -5,4 +5,9 @@ public class HeaderParameter extends AbstractSerializableParameter<HeaderParamet
     public HeaderParameter() {
         super.setIn("header");
     }
+
+    @Override
+    protected String getDefaultCollectionFormat() {
+        return "multi";
+    }
 }

@@ -2,11 +2,21 @@ package com.beerboy.ss.factory;
 
 import com.beerboy.ss.descriptor.ParameterDescriptor;
 import com.beerboy.ss.model.parameters.AbstractSerializableParameter;
+import com.beerboy.ss.model.parameters.HeaderParameter;
 import com.beerboy.ss.model.parameters.Parameter;
 import com.beerboy.ss.model.parameters.PathParameter;
 import com.beerboy.ss.model.parameters.QueryParameter;
-import com.beerboy.ss.model.properties.*;
-import spark.utils.SparkUtils;
+import com.beerboy.ss.model.properties.ArrayProperty;
+import com.beerboy.ss.model.properties.BooleanProperty;
+import com.beerboy.ss.model.properties.ByteArrayProperty;
+import com.beerboy.ss.model.properties.DecimalProperty;
+import com.beerboy.ss.model.properties.DoubleProperty;
+import com.beerboy.ss.model.properties.FloatProperty;
+import com.beerboy.ss.model.properties.IntegerProperty;
+import com.beerboy.ss.model.properties.LongProperty;
+import com.beerboy.ss.model.properties.Property;
+import com.beerboy.ss.model.properties.StringProperty;
+import com.beerboy.ss.model.properties.UUIDProperty;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -16,6 +26,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import spark.utils.SparkUtils;
 
 /**
  * @author manusant
@@ -29,7 +41,16 @@ public class ParamsFactory {
         parameters.addAll(pathParams);
         List<Parameter> queryParams = createQueryParams(parameterDescriptors);
         parameters.addAll(queryParams);
+        List<Parameter> headerParams = createHeaderParams(parameterDescriptors);
+        parameters.addAll(headerParams);
         return parameters;
+    }
+
+    private static List<Parameter> createHeaderParams(List<ParameterDescriptor> parameterDescriptors) {
+            return filter(parameterDescriptors, ParameterDescriptor.ParameterType.HEADER)
+                    .stream()
+                    .map(ParamsFactory::toHeader)
+                    .collect(Collectors.toList());
     }
 
     private static List<Parameter> createPathParams(String pathUri, List<ParameterDescriptor> parameterDescriptors) {
@@ -114,6 +135,12 @@ public class ParamsFactory {
 
     private static QueryParameter toQuey(final ParameterDescriptor parameterDescriptor) {
         QueryParameter parameter = new QueryParameter();
+        bindAttributes(parameterDescriptor, parameter);
+        return parameter;
+    }
+
+    private static HeaderParameter toHeader(final ParameterDescriptor parameterDescriptor) {
+        HeaderParameter parameter = new HeaderParameter();
         bindAttributes(parameterDescriptor, parameter);
         return parameter;
     }

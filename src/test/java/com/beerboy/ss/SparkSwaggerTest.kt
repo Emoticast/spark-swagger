@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
 import com.beerboy.ss.descriptor.EndpointDescriptor
 import com.beerboy.ss.descriptor.MethodDescriptor
+import com.beerboy.ss.descriptor.ParameterDescriptor
 import org.slf4j.LoggerFactory
 
 object SparkSwaggerTest {
@@ -22,7 +23,14 @@ object SparkSwaggerTest {
             swagger
                     .endpoint(EndpointDescriptor.endpointPath("/hello")) { a, b -> }
                     .get(MethodDescriptor.path("/there")
-//                            .withRequestType(MyFoo::class)
+                            .withQueryParam(ParameterDescriptor().apply {
+                                name = "pathname"
+                                description = "the description"
+                            })
+                            .withHeaderParam(ParameterDescriptor().apply {
+                                name = "headername"
+                                description = "the description"
+                            })
                             .withResponseType(MyFoo::class)) { a, b -> "response" }
 
             service.get("/foo") { a, b -> "hey" }

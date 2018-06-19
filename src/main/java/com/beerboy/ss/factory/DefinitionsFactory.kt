@@ -24,7 +24,6 @@ object DefinitionsFactory {
     var ignoreSpec: IgnoreSpec? = null
 
     fun create(type: KClass<*>): Map<String, Model> {
-        println(type)
         val definitions = HashMap<String, Model>()
 
         if (isObject(type)) {
@@ -70,8 +69,6 @@ object DefinitionsFactory {
     }
 
     fun createProperty(field: KCallable<*>, fieldClass: Class<*>): Property {
-        println("creating property")
-        println("field = [${field}], fieldClass = [${fieldClass}]")
         return when {
             fieldClass.isEnum -> {
                 val property = StringProperty()
