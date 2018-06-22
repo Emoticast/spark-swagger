@@ -5,6 +5,7 @@ import ch.qos.logback.classic.Logger
 import com.beerboy.ss.descriptor.EndpointDescriptor
 import com.beerboy.ss.descriptor.MethodDescriptor
 import com.beerboy.ss.descriptor.ParameterDescriptor
+import com.beerboy.ss.factory.DefinitionsFactoryTest
 import org.slf4j.LoggerFactory
 
 object SparkSwaggerTest {
@@ -23,6 +24,8 @@ object SparkSwaggerTest {
                     title = "Test",
                     host = "localhost:3000",
                     basePath = "/test",
+                    theme = Theme.MATERIAL,
+                    defaultModelExpandDepth = 10,
                     docPath = "/doc"
             ))
 
@@ -37,7 +40,7 @@ object SparkSwaggerTest {
                                 name = "headername"
                                 description = "the description"
                             })
-                            .withResponseType(MyFoo::class)) { a, b -> "response" }
+                            .withResponseType(DefinitionsFactoryTest.ClassWithCollection::class)) { a, b -> "response" }
 
             service.get("/foo") { _, _ -> "hey" }
             swagger.generateDoc()

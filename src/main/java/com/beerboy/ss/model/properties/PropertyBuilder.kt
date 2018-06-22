@@ -4,6 +4,7 @@ import com.beerboy.ss.model.ArrayModel
 import com.beerboy.ss.model.Model
 import com.beerboy.ss.model.ModelImpl
 import com.beerboy.ss.model.RefModel
+import com.emoticast.extensions.print
 import org.slf4j.LoggerFactory
 import java.math.BigDecimal
 import java.util.*

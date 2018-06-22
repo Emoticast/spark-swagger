@@ -4,12 +4,10 @@ import com.beerboy.spark.typify.spec.IgnoreSpec
 import com.beerboy.ss.model.Model
 import com.beerboy.ss.model.ModelImpl
 import com.beerboy.ss.model.properties.*
-import org.slf4j.LoggerFactory
 import java.io.File
-import java.lang.reflect.ParameterizedType
 import java.util.*
 import kotlin.reflect.KCallable
-import kotlin.reflect.KClass
+import kotlin.reflect.KType
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.jvmErasure
@@ -19,19 +17,17 @@ import kotlin.reflect.jvm.jvmErasure
  */
 object DefinitionsFactory {
 
-    private val LOGGER = LoggerFactory.getLogger(DefinitionsFactory::class.java)
-
     var ignoreSpec: IgnoreSpec? = null
 
-    fun create(type: KClass<*>): Map<String, Model> {
+    fun create(type: KType): Map<String, Model> {
         val definitions = HashMap<String, Model>()
 
         if (isObject(type)) {
             val model = ModelImpl()
             model.type = ModelImpl.OBJECT
-            definitions[type.simpleName!!] = model
+            definitions[type.jvmErasure.simpleName!!] = model
 
-            val refDefinitions = parseProperties(model, type.declaredMemberProperties)
+            val refDefinitions = parseProperties(model, type.jvmErasure.declaredMemberProperties)
             definitions.putAll(refDefinitions)
         }
         return definitions
@@ -41,22 +37,19 @@ object DefinitionsFactory {
         val refDefinitions = HashMap<String, Model>()
 
         for (field in fields) {
-            if (DefinitionsFactory.ignoreSpec == null) {
-                if (isViable(field)) {
-                    val property = createProperty(field, field.returnType.jvmErasure.java)
+            if (isViable(field)) {
+                val property = createProperty(field.returnType)
 
-                    val suffix = if (field.returnType.isMarkedNullable) "?" else ""
-                    model.addProperty("${field.name}$suffix", property)
+                model.addProperty(field.name, property)
 
-                    if (isRef(field.returnType.jvmErasure)) {
-                        val definitions = create(field.returnType.jvmErasure)
+                if (isRef(field.returnType)) {
+                    val definitions = create(field.returnType)
+                    refDefinitions.putAll(definitions)
+                } else if (field.returnType.javaClass.isArray || Collection::class.java.isAssignableFrom(field.returnType.jvmErasure.java)) {
+                    val childType = getCollectionType(field.returnType)
+                    if (isRef(childType)) {
+                        val definitions = create(childType)
                         refDefinitions.putAll(definitions)
-                    } else if (field.returnType.javaClass.isArray || Collection::class.java.isAssignableFrom(field.returnType.javaClass)) {
-                        val childType = getCollectionType(field)
-                        if (isRef(childType)) {
-                            val definitions = create(childType)
-                            refDefinitions.putAll(definitions)
-                        }
                     }
                 }
             }
@@ -68,91 +61,72 @@ object DefinitionsFactory {
         return field.visibility == KVisibility.PUBLIC
     }
 
-    fun createProperty(field: KCallable<*>, fieldClass: Class<*>): Property {
+    fun createProperty(fieldType: KType): Property {
+        val fieldClass = fieldType.jvmErasure
         return when {
-            fieldClass.isEnum -> {
+            fieldType.jvmErasure.java.isEnum -> {
                 val property = StringProperty()
-                property._enum(fieldClass.enumConstants.map { o -> (o as Enum<*>).name })
+                property._enum(fieldType.jvmErasure.java.enumConstants.map { o -> (o as Enum<*>).name })
             }
-            fieldClass == Boolean::class.javaPrimitiveType || fieldClass == Boolean::class.java -> BooleanProperty()
-            fieldClass == ByteArray::class.java -> ByteArrayProperty()
-            fieldClass == Date::class.java || fieldClass == java.sql.Date::class.java -> DateProperty()
-            fieldClass == Number::class.java -> DecimalProperty()
-            fieldClass == Double::class.java || fieldClass == Double::class.javaPrimitiveType -> DoubleProperty()
-            fieldClass == Float::class.java || fieldClass == Float::class.javaPrimitiveType -> FloatProperty()
-            fieldClass == Int::class.java || fieldClass == Int::class.javaPrimitiveType || fieldClass == Integer::class.java -> IntegerProperty()
-            fieldClass == Long::class.java || fieldClass == Long::class.javaPrimitiveType -> LongProperty()
-            fieldClass == String::class.java -> StringProperty()
-            fieldClass == UUID::class.java -> UUIDProperty()
-            fieldClass.isArray || Collection::class.java.isAssignableFrom(fieldClass) -> {
+            fieldClass.java == Boolean::class.javaPrimitiveType || fieldClass == Boolean::class.java -> BooleanProperty()
+            fieldClass.java == ByteArray::class.java -> ByteArrayProperty()
+            fieldClass.java == Date::class.java || fieldClass == java.sql.Date::class.java -> DateProperty()
+            fieldClass.java == Number::class.java -> DecimalProperty()
+            fieldClass.java == Double::class.java || fieldClass == Double::class.javaPrimitiveType -> DoubleProperty()
+            fieldClass.java == Float::class.java || fieldClass == Float::class.javaPrimitiveType -> FloatProperty()
+            fieldClass.java == Int::class.java || fieldClass == Int::class.javaPrimitiveType || fieldClass == Integer::class.java -> IntegerProperty()
+            fieldClass.java == Long::class.java || fieldClass == Long::class.javaPrimitiveType -> LongProperty()
+            fieldClass.java == String::class.java -> StringProperty()
+            fieldClass.java == UUID::class.java -> UUIDProperty()
+            fieldClass.java.isArray || Collection::class.java.isAssignableFrom(fieldClass.java) -> {
                 val property = ArrayProperty()
-                // FIXME set actual items
-                property.items = getCollectionProperty(field)
+                property.items = getCollectionProperty(fieldType)
                 property
             }
-            File::class.java.isAssignableFrom(fieldClass) -> FileProperty()
+            File::class.java.isAssignableFrom(fieldType.jvmErasure.java) -> FileProperty()
             else -> {
                 val property = RefProperty()
-                property.`$ref` = "#/definitions/" + fieldClass.simpleName
+                property.`$ref` = "#/definitions/" + fieldType.jvmErasure.simpleName
                 property
             }
+        }.apply {
+            required = !fieldType.isMarkedNullable
         }
     }
 
-    private fun isRef(fieldClass: KClass<*>): Boolean {
-        return !(fieldClass.java.isEnum
-                || fieldClass == Boolean::class
-                || fieldClass == Boolean::class
-                || fieldClass == ByteArray::class
-                || fieldClass == Date::class
-                || fieldClass == java.sql.Date::class
-                || fieldClass == Number::class
-                || fieldClass == Double::class
-                || fieldClass == Double::class
-                || fieldClass == Float::class
-                || fieldClass == Float::class
-                || fieldClass == Int::class
-                || fieldClass == Int::class
-                || fieldClass == Long::class
-                || fieldClass == Long::class
-                || fieldClass == String::class
-                || fieldClass == UUID::class
-                || fieldClass.java.isArray
-                || Collection::class.java.isAssignableFrom(fieldClass.java)
-                || File::class.java.isAssignableFrom(fieldClass.java)
-                || fieldClass.java.canonicalName.contains("java"))
-    }
+    private fun isRef(type: KType): Boolean = !(type.jvmErasure.java.isEnum
+            || type.jvmErasure == Boolean::class
+            || type.jvmErasure == Boolean::class
+            || type.jvmErasure == ByteArray::class
+            || type.jvmErasure == Date::class
+            || type.jvmErasure == java.sql.Date::class
+            || type.jvmErasure == Number::class
+            || type.jvmErasure == Double::class
+            || type.jvmErasure == Double::class
+            || type.jvmErasure == Float::class
+            || type.jvmErasure == Float::class
+            || type.jvmErasure == Int::class
+            || type.jvmErasure == Int::class
+            || type.jvmErasure == Long::class
+            || type.jvmErasure == Long::class
+            || type.jvmErasure == String::class
+            || type.jvmErasure == UUID::class
+            || type.jvmErasure.java.isArray
+            || Collection::class.java.isAssignableFrom(type.jvmErasure.java)
+            || File::class.java.isAssignableFrom(type.jvmErasure.java)
+            || type.jvmErasure.java.canonicalName.contains("java"))
 
-    private fun isObject(fieldClass: KClass<*>): Boolean {
-        return !(fieldClass.java.isEnum
-                || fieldClass == Boolean::class
-                || fieldClass == ByteArray::class
-                || fieldClass == Number::class
-                || fieldClass == Double::class
-                || fieldClass == Float::class
-                || fieldClass == Int::class
-                || fieldClass == Long::class
-                || fieldClass == String::class)
-    }
+    private fun isObject(type: KType): Boolean = !(type.jvmErasure.java.isEnum
+            || type.jvmErasure == Boolean::class
+            || type.jvmErasure == ByteArray::class
+            || type.jvmErasure == Number::class
+            || type.jvmErasure == Double::class
+            || type.jvmErasure == Float::class
+            || type.jvmErasure == Int::class
+            || type.jvmErasure == Long::class
+            || type.jvmErasure == String::class)
 
-    private fun getCollectionProperty(collectionField: KCallable<*>): Property {
-        val childType = getCollectionType(collectionField)
-        return createProperty(collectionField, childType.java)
-    }
+    private fun getCollectionProperty(collectionField: KType?): Property = createProperty(getCollectionType(collectionField))
 
-    private fun getCollectionType(collectionField: KCallable<*>): KClass<*> {
-        try {
-            val actualType = collectionField.returnType.arguments[0].type
-            if (actualType is KClass<*>) {
-                return actualType
-            } else if (actualType is ParameterizedType) {
-                return actualType as KClass<*>
-            }
-        } catch (e: ClassCastException) {
-            LOGGER.error("Field mapping not supported. ", e)
-        }
-
-        // FIXME resolve actual type in strange collection types
-        return String::class
-    }
+    private fun getCollectionType(collectionField: KType?): KType = collectionField?.arguments?.get(0)?.type!!
 }

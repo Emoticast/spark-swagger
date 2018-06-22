@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonInclude.Include
 import org.slf4j.LoggerFactory
 import java.util.*
+import kotlin.reflect.full.starProjectedType
 
 /**
  * @author manusant
@@ -410,7 +411,7 @@ class Swagger {
 
                         if (methodDescriptor.requestType != null) {
                             // Process fields
-                            val definitions = DefinitionsFactory.create(methodDescriptor.requestType!!)
+                            val definitions = DefinitionsFactory.create(methodDescriptor.requestType?.starProjectedType!!)
                             for (key in definitions.keys) {
                                 if (!hasDefinition(key)) {
                                     addDefinition(key, definitions[key]!!)
@@ -418,8 +419,9 @@ class Swagger {
                             }
 
                             val model: Model
+
                             if (definitions.isEmpty()) {
-                                val property = DefinitionsFactory.createProperty(null!!, methodDescriptor.requestType!!.java)
+                                val property = DefinitionsFactory.createProperty(methodDescriptor.requestType?.starProjectedType!!)
                                 model = PropertyModelConverter().propertyToModel(property)
                             } else {
                                 val refModel = RefModel()
@@ -436,7 +438,7 @@ class Swagger {
 
                         if (methodDescriptor.responseType != null) {
                             // Process fields
-                            val definitions = DefinitionsFactory.create(methodDescriptor.responseType!!)
+                            val definitions = DefinitionsFactory.create(methodDescriptor.responseType?.starProjectedType!!)
                             for (key in definitions.keys) {
                                 if (!hasDefinition(key)) {
                                     addDefinition(key, definitions[key]!!)
@@ -445,7 +447,7 @@ class Swagger {
 
                             val property: Property?
                             if (definitions.isEmpty()) {
-                                property = DefinitionsFactory.createProperty(null!!, methodDescriptor.responseType!!.java)
+                                property = DefinitionsFactory.createProperty(methodDescriptor.responseType?.starProjectedType!!)
                             } else {
                                 val refModel = RefModel()
                                 refModel.`$ref` = methodDescriptor.responseType!!.simpleName
@@ -469,6 +471,7 @@ class Swagger {
                         if (methodDescriptor.consumes != null) {
                             op.consumes(methodDescriptor.consumes)
                         }
+
 
                         addOperation(methodDescriptor.path, methodDescriptor.method, op)
                     }
