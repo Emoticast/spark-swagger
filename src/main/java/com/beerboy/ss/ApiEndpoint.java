@@ -2,16 +2,17 @@ package com.beerboy.ss;
 
 import com.beerboy.ss.descriptor.EndpointDescriptor;
 import com.beerboy.ss.descriptor.MethodDescriptor;
-import com.beerboy.ss.model.ContentType;
 import com.beerboy.ss.model.HttpMethod;
-import com.beerboy.spark.typify.route.GsonRoute;
-import com.beerboy.spark.typify.route.TypedGsonRoute;
-import spark.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import spark.Filter;
+import spark.ResponseTransformer;
+import spark.Route;
+import spark.TemplateEngine;
+import spark.TemplateViewRoute;
 
 /**
  * @author manusant
@@ -25,7 +26,7 @@ public class ApiEndpoint {
     public ApiEndpoint(final SparkSwagger swagger, final EndpointDescriptor endpointDescriptor) {
         this.swagger = swagger;
         this.endpointDescriptor = endpointDescriptor;
-        this.endpointDescriptor.setNameSpace(swagger.getApiPath() + endpointDescriptor.getPath());
+        this.endpointDescriptor.setNameSpace(swagger.getServiceName() + endpointDescriptor.getPath());
         this.methodDescriptors = new ArrayList<>();
     }
 
@@ -65,121 +66,121 @@ public class ApiEndpoint {
 
     public ApiEndpoint get(final MethodDescriptor.Builder descriptorBuilder, Route route) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.GET, descriptorBuilder, route);
-        swagger.getSpark().get(swagger.getApiPath() + descriptor.getPath(), route);
+        swagger.getSpark().get(swagger.getServiceName() + descriptor.getPath(), route);
         return this;
     }
 
     public ApiEndpoint post(final MethodDescriptor.Builder descriptorBuilder, Route route) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.POST, descriptorBuilder, route);
-        swagger.getSpark().post(swagger.getApiPath() + descriptor.getPath(), route);
+        swagger.getSpark().post(swagger.getServiceName() + descriptor.getPath(), route);
         return this;
     }
 
     public ApiEndpoint put(final MethodDescriptor.Builder descriptorBuilder, Route route) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.PUT, descriptorBuilder, route);
-        swagger.getSpark().put(swagger.getApiPath() + descriptor.getPath(), route);
+        swagger.getSpark().put(swagger.getServiceName() + descriptor.getPath(), route);
         return this;
     }
 
     public ApiEndpoint patch(final MethodDescriptor.Builder descriptorBuilder, Route route) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.PATCH, descriptorBuilder, route);
-        swagger.getSpark().patch(swagger.getApiPath() + descriptor.getPath(), route);
+        swagger.getSpark().patch(swagger.getServiceName() + descriptor.getPath(), route);
         return this;
     }
 
     public ApiEndpoint delete(final MethodDescriptor.Builder descriptorBuilder, Route route) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.DELETE, descriptorBuilder, route);
-        swagger.getSpark().delete(swagger.getApiPath() + descriptor.getPath(), route);
+        swagger.getSpark().delete(swagger.getServiceName() + descriptor.getPath(), route);
         return this;
     }
 
     public ApiEndpoint head(final MethodDescriptor.Builder descriptorBuilder, Route route) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.HEAD, descriptorBuilder, route);
-        swagger.getSpark().head(swagger.getApiPath() + descriptor.getPath(), route);
+        swagger.getSpark().head(swagger.getServiceName() + descriptor.getPath(), route);
         return this;
     }
 
     public ApiEndpoint trace(final MethodDescriptor.Builder descriptorBuilder, Route route) {
         MethodDescriptor descriptor = bindDescription(null, descriptorBuilder, route);
-        swagger.getSpark().trace(swagger.getApiPath() + descriptor.getPath(), route);
+        swagger.getSpark().trace(swagger.getServiceName() + descriptor.getPath(), route);
         return this;
     }
 
     public ApiEndpoint connect(final MethodDescriptor.Builder descriptorBuilder, Route route) {
         MethodDescriptor descriptor = bindDescription(null, descriptorBuilder, route);
-        swagger.getSpark().connect(swagger.getApiPath() + descriptor.getPath(), route);
+        swagger.getSpark().connect(swagger.getServiceName() + descriptor.getPath(), route);
         return this;
     }
 
     public ApiEndpoint options(final MethodDescriptor.Builder descriptorBuilder, Route route) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.OPTIONS, descriptorBuilder, route);
-        swagger.getSpark().options(swagger.getApiPath() + descriptor.getPath(), route);
+        swagger.getSpark().options(swagger.getServiceName() + descriptor.getPath(), route);
         return this;
     }
 
     public ApiEndpoint before(final MethodDescriptor.Builder descriptorBuilder, Filter filter) {
         MethodDescriptor descriptor = bindDescription(null, descriptorBuilder);
-        swagger.getSpark().before(swagger.getApiPath() + descriptor.getPath(), filter);
+        swagger.getSpark().before(swagger.getServiceName() + descriptor.getPath(), filter);
         return this;
     }
 
     public ApiEndpoint after(final MethodDescriptor.Builder descriptorBuilder, Filter filter) {
         MethodDescriptor descriptor = bindDescription(null, descriptorBuilder);
-        swagger.getSpark().after(swagger.getApiPath() + descriptor.getPath(), filter);
+        swagger.getSpark().after(swagger.getServiceName() + descriptor.getPath(), filter);
         return this;
     }
 
     public ApiEndpoint get(final MethodDescriptor.Builder descriptorBuilder, String acceptType, Route route) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.GET, descriptorBuilder, route);
-        swagger.getSpark().get(swagger.getApiPath() + descriptor.getPath(), acceptType, route);
+        swagger.getSpark().get(swagger.getServiceName() + descriptor.getPath(), acceptType, route);
         return this;
     }
 
     public ApiEndpoint post(final MethodDescriptor.Builder descriptorBuilder, String acceptType, Route route) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.POST, descriptorBuilder, route);
-        swagger.getSpark().post(swagger.getApiPath() + descriptor.getPath(), acceptType, route);
+        swagger.getSpark().post(swagger.getServiceName() + descriptor.getPath(), acceptType, route);
         return this;
     }
 
     public ApiEndpoint put(final MethodDescriptor.Builder descriptorBuilder, String acceptType, Route route) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.PUT, descriptorBuilder, route);
-        swagger.getSpark().put(swagger.getApiPath() + descriptor.getPath(), acceptType, route);
+        swagger.getSpark().put(swagger.getServiceName() + descriptor.getPath(), acceptType, route);
         return this;
     }
 
     public ApiEndpoint patch(final MethodDescriptor.Builder descriptorBuilder, String acceptType, Route route) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.PATCH, descriptorBuilder, route);
-        swagger.getSpark().patch(swagger.getApiPath() + descriptor.getPath(), acceptType, route);
+        swagger.getSpark().patch(swagger.getServiceName() + descriptor.getPath(), acceptType, route);
         return this;
     }
 
     public ApiEndpoint delete(final MethodDescriptor.Builder descriptorBuilder, String acceptType, Route route) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.DELETE, descriptorBuilder, route);
-        swagger.getSpark().delete(swagger.getApiPath() + descriptor.getPath(), acceptType, route);
+        swagger.getSpark().delete(swagger.getServiceName() + descriptor.getPath(), acceptType, route);
         return this;
     }
 
     public ApiEndpoint head(final MethodDescriptor.Builder descriptorBuilder, String acceptType, Route route) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.HEAD, descriptorBuilder);
-        swagger.getSpark().head(swagger.getApiPath() + descriptor.getPath(), acceptType, route);
+        swagger.getSpark().head(swagger.getServiceName() + descriptor.getPath(), acceptType, route);
         return this;
     }
 
     public ApiEndpoint trace(final MethodDescriptor.Builder descriptorBuilder, String acceptType, Route route) {
         MethodDescriptor descriptor = bindDescription(null, descriptorBuilder);
-        swagger.getSpark().trace(swagger.getApiPath() + descriptor.getPath(), acceptType, route);
+        swagger.getSpark().trace(swagger.getServiceName() + descriptor.getPath(), acceptType, route);
         return this;
     }
 
     public ApiEndpoint connect(final MethodDescriptor.Builder descriptorBuilder, String acceptType, Route route) {
         MethodDescriptor descriptor = bindDescription(null, descriptorBuilder);
-        swagger.getSpark().connect(swagger.getApiPath() + descriptor.getPath(), acceptType, route);
+        swagger.getSpark().connect(swagger.getServiceName() + descriptor.getPath(), acceptType, route);
         return this;
     }
 
     public ApiEndpoint options(final MethodDescriptor.Builder descriptorBuilder, String acceptType, Route route) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.OPTIONS, descriptorBuilder);
-        swagger.getSpark().options(swagger.getApiPath() + descriptor.getPath(), acceptType, route);
+        swagger.getSpark().options(swagger.getServiceName() + descriptor.getPath(), acceptType, route);
         return this;
     }
 
@@ -195,13 +196,13 @@ public class ApiEndpoint {
 
     public ApiEndpoint before(final MethodDescriptor.Builder descriptorBuilder, String acceptType, Filter filter) {
         MethodDescriptor descriptor = bindDescription(null, descriptorBuilder);
-        swagger.getSpark().before(swagger.getApiPath() + descriptor.getPath(), acceptType, filter);
+        swagger.getSpark().before(swagger.getServiceName() + descriptor.getPath(), acceptType, filter);
         return this;
     }
 
     public ApiEndpoint after(final MethodDescriptor.Builder descriptorBuilder, String acceptType, Filter filter) {
         MethodDescriptor descriptor = bindDescription(null, descriptorBuilder);
-        swagger.getSpark().after(swagger.getApiPath() + descriptor.getPath(), acceptType, filter);
+        swagger.getSpark().after(swagger.getServiceName() + descriptor.getPath(), acceptType, filter);
         return this;
     }
 
@@ -212,223 +213,223 @@ public class ApiEndpoint {
 
     public ApiEndpoint afterAfter(final MethodDescriptor.Builder descriptorBuilder, Filter filter) {
         MethodDescriptor descriptor = bindDescription(null, descriptorBuilder);
-        swagger.getSpark().afterAfter(swagger.getApiPath() + descriptor.getPath(), filter);
+        swagger.getSpark().afterAfter(swagger.getServiceName() + descriptor.getPath(), filter);
         return this;
     }
 
     public ApiEndpoint get(final MethodDescriptor.Builder descriptorBuilder, TemplateViewRoute route, TemplateEngine engine) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.GET, descriptorBuilder);
-        swagger.getSpark().get(swagger.getApiPath() + descriptor.getPath(), route, engine);
+        swagger.getSpark().get(swagger.getServiceName() + descriptor.getPath(), route, engine);
         return this;
     }
 
     public ApiEndpoint get(final MethodDescriptor.Builder descriptorBuilder, String acceptType, TemplateViewRoute route, TemplateEngine engine) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.GET, descriptorBuilder);
-        swagger.getSpark().get(swagger.getApiPath() + descriptor.getPath(), acceptType, route, engine);
+        swagger.getSpark().get(swagger.getServiceName() + descriptor.getPath(), acceptType, route, engine);
         return this;
     }
 
     public ApiEndpoint post(final MethodDescriptor.Builder descriptorBuilder, TemplateViewRoute route, TemplateEngine engine) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.POST, descriptorBuilder);
-        swagger.getSpark().post(swagger.getApiPath() + descriptor.getPath(), route, engine);
+        swagger.getSpark().post(swagger.getServiceName() + descriptor.getPath(), route, engine);
         return this;
     }
 
     public ApiEndpoint post(final MethodDescriptor.Builder descriptorBuilder, String acceptType, TemplateViewRoute route, TemplateEngine engine) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.POST, descriptorBuilder);
-        swagger.getSpark().post(swagger.getApiPath() + descriptor.getPath(), acceptType, route, engine);
+        swagger.getSpark().post(swagger.getServiceName() + descriptor.getPath(), acceptType, route, engine);
         return this;
     }
 
     public ApiEndpoint put(final MethodDescriptor.Builder descriptorBuilder, TemplateViewRoute route, TemplateEngine engine) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.PUT, descriptorBuilder);
-        swagger.getSpark().put(swagger.getApiPath() + descriptor.getPath(), route, engine);
+        swagger.getSpark().put(swagger.getServiceName() + descriptor.getPath(), route, engine);
         return this;
     }
 
     public ApiEndpoint put(final MethodDescriptor.Builder descriptorBuilder, String acceptType, TemplateViewRoute route, TemplateEngine engine) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.PUT, descriptorBuilder);
-        swagger.getSpark().put(swagger.getApiPath() + descriptor.getPath(), acceptType, route, engine);
+        swagger.getSpark().put(swagger.getServiceName() + descriptor.getPath(), acceptType, route, engine);
         return this;
     }
 
     public ApiEndpoint delete(final MethodDescriptor.Builder descriptorBuilder, TemplateViewRoute route, TemplateEngine engine) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.DELETE, descriptorBuilder);
-        swagger.getSpark().delete(swagger.getApiPath() + descriptor.getPath(), route, engine);
+        swagger.getSpark().delete(swagger.getServiceName() + descriptor.getPath(), route, engine);
         return this;
     }
 
     public ApiEndpoint delete(final MethodDescriptor.Builder descriptorBuilder, String acceptType, TemplateViewRoute route, TemplateEngine engine) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.DELETE, descriptorBuilder);
-        swagger.getSpark().delete(swagger.getApiPath() + descriptor.getPath(), acceptType, route, engine);
+        swagger.getSpark().delete(swagger.getServiceName() + descriptor.getPath(), acceptType, route, engine);
         return this;
     }
 
     public ApiEndpoint patch(final MethodDescriptor.Builder descriptorBuilder, TemplateViewRoute route, TemplateEngine engine) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.PATCH, descriptorBuilder);
-        swagger.getSpark().patch(swagger.getApiPath() + descriptor.getPath(), route, engine);
+        swagger.getSpark().patch(swagger.getServiceName() + descriptor.getPath(), route, engine);
         return this;
     }
 
     public ApiEndpoint patch(final MethodDescriptor.Builder descriptorBuilder, String acceptType, TemplateViewRoute route, TemplateEngine engine) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.PATCH, descriptorBuilder);
-        swagger.getSpark().patch(swagger.getApiPath() + descriptor.getPath(), acceptType, route, engine);
+        swagger.getSpark().patch(swagger.getServiceName() + descriptor.getPath(), acceptType, route, engine);
         return this;
     }
 
     public ApiEndpoint head(final MethodDescriptor.Builder descriptorBuilder, TemplateViewRoute route, TemplateEngine engine) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.HEAD, descriptorBuilder);
-        swagger.getSpark().head(swagger.getApiPath() + descriptor.getPath(), route, engine);
+        swagger.getSpark().head(swagger.getServiceName() + descriptor.getPath(), route, engine);
         return this;
     }
 
     public ApiEndpoint head(final MethodDescriptor.Builder descriptorBuilder, String acceptType, TemplateViewRoute route, TemplateEngine engine) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.HEAD, descriptorBuilder);
-        swagger.getSpark().head(swagger.getApiPath() + descriptor.getPath(), acceptType, route, engine);
+        swagger.getSpark().head(swagger.getServiceName() + descriptor.getPath(), acceptType, route, engine);
         return this;
     }
 
     public ApiEndpoint trace(final MethodDescriptor.Builder descriptorBuilder, TemplateViewRoute route, TemplateEngine engine) {
         MethodDescriptor descriptor = bindDescription(null, descriptorBuilder);
-        swagger.getSpark().trace(swagger.getApiPath() + descriptor.getPath(), route, engine);
+        swagger.getSpark().trace(swagger.getServiceName() + descriptor.getPath(), route, engine);
         return this;
     }
 
     public ApiEndpoint trace(final MethodDescriptor.Builder descriptorBuilder, String acceptType, TemplateViewRoute route, TemplateEngine engine) {
         MethodDescriptor descriptor = bindDescription(null, descriptorBuilder);
-        swagger.getSpark().trace(swagger.getApiPath() + descriptor.getPath(), acceptType, route, engine);
+        swagger.getSpark().trace(swagger.getServiceName() + descriptor.getPath(), acceptType, route, engine);
         return this;
     }
 
     public ApiEndpoint connect(final MethodDescriptor.Builder descriptorBuilder, TemplateViewRoute route, TemplateEngine engine) {
         MethodDescriptor descriptor = bindDescription(null, descriptorBuilder);
-        swagger.getSpark().connect(swagger.getApiPath() + descriptor.getPath(), route, engine);
+        swagger.getSpark().connect(swagger.getServiceName() + descriptor.getPath(), route, engine);
         return this;
     }
 
     public ApiEndpoint connect(final MethodDescriptor.Builder descriptorBuilder, String acceptType, TemplateViewRoute route, TemplateEngine engine) {
         MethodDescriptor descriptor = bindDescription(null, descriptorBuilder);
-        swagger.getSpark().connect(swagger.getApiPath() + descriptor.getPath(), acceptType, route, engine);
+        swagger.getSpark().connect(swagger.getServiceName() + descriptor.getPath(), acceptType, route, engine);
         return this;
     }
 
     public ApiEndpoint options(final MethodDescriptor.Builder descriptorBuilder, TemplateViewRoute route, TemplateEngine engine) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.OPTIONS, descriptorBuilder);
-        swagger.getSpark().options(swagger.getApiPath() + descriptor.getPath(), route, engine);
+        swagger.getSpark().options(swagger.getServiceName() + descriptor.getPath(), route, engine);
         return this;
     }
 
     public ApiEndpoint options(final MethodDescriptor.Builder descriptorBuilder, String acceptType, TemplateViewRoute route, TemplateEngine engine) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.OPTIONS, descriptorBuilder);
-        swagger.getSpark().options(swagger.getApiPath() + descriptor.getPath(), acceptType, route, engine);
+        swagger.getSpark().options(swagger.getServiceName() + descriptor.getPath(), acceptType, route, engine);
         return this;
     }
 
     public ApiEndpoint get(final MethodDescriptor.Builder descriptorBuilder, Route route, ResponseTransformer transformer) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.GET, descriptorBuilder);
-        swagger.getSpark().get(swagger.getApiPath() + descriptor.getPath(), route, transformer);
+        swagger.getSpark().get(swagger.getServiceName() + descriptor.getPath(), route, transformer);
         return this;
     }
 
     public ApiEndpoint get(final MethodDescriptor.Builder descriptorBuilder, String acceptType, Route route, ResponseTransformer transformer) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.GET, descriptorBuilder, route);
-        swagger.getSpark().get(swagger.getApiPath() + descriptor.getPath(), acceptType, route, transformer);
+        swagger.getSpark().get(swagger.getServiceName() + descriptor.getPath(), acceptType, route, transformer);
         return this;
     }
 
     public ApiEndpoint post(final MethodDescriptor.Builder descriptorBuilder, Route route, ResponseTransformer transformer) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.POST, descriptorBuilder, route);
-        swagger.getSpark().post(swagger.getApiPath() + descriptor.getPath(), route, transformer);
+        swagger.getSpark().post(swagger.getServiceName() + descriptor.getPath(), route, transformer);
         return this;
     }
 
     public ApiEndpoint post(final MethodDescriptor.Builder descriptorBuilder, String acceptType, Route route, ResponseTransformer transformer) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.POST, descriptorBuilder, route);
-        swagger.getSpark().post(swagger.getApiPath() + descriptor.getPath(), acceptType, route, transformer);
+        swagger.getSpark().post(swagger.getServiceName() + descriptor.getPath(), acceptType, route, transformer);
         return this;
     }
 
     public ApiEndpoint put(final MethodDescriptor.Builder descriptorBuilder, Route route, ResponseTransformer transformer) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.PUT, descriptorBuilder, route);
-        swagger.getSpark().put(swagger.getApiPath() + descriptor.getPath(), route, transformer);
+        swagger.getSpark().put(swagger.getServiceName() + descriptor.getPath(), route, transformer);
         return this;
     }
 
     public ApiEndpoint put(final MethodDescriptor.Builder descriptorBuilder, String acceptType, Route route, ResponseTransformer transformer) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.PUT, descriptorBuilder, route);
-        swagger.getSpark().put(swagger.getApiPath() + descriptor.getPath(), acceptType, route, transformer);
+        swagger.getSpark().put(swagger.getServiceName() + descriptor.getPath(), acceptType, route, transformer);
         return this;
     }
 
     public ApiEndpoint delete(final MethodDescriptor.Builder descriptorBuilder, Route route, ResponseTransformer transformer) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.DELETE, descriptorBuilder, route);
-        swagger.getSpark().delete(swagger.getApiPath() + descriptor.getPath(), route, transformer);
+        swagger.getSpark().delete(swagger.getServiceName() + descriptor.getPath(), route, transformer);
         return this;
     }
 
     public ApiEndpoint delete(final MethodDescriptor.Builder descriptorBuilder, String acceptType, Route route, ResponseTransformer transformer) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.DELETE, descriptorBuilder, route);
-        swagger.getSpark().delete(swagger.getApiPath() + descriptor.getPath(), acceptType, route, transformer);
+        swagger.getSpark().delete(swagger.getServiceName() + descriptor.getPath(), acceptType, route, transformer);
         return this;
     }
 
     public ApiEndpoint head(final MethodDescriptor.Builder descriptorBuilder, Route route, ResponseTransformer transformer) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.HEAD, descriptorBuilder);
-        swagger.getSpark().head(swagger.getApiPath() + descriptor.getPath(), route, transformer);
+        swagger.getSpark().head(swagger.getServiceName() + descriptor.getPath(), route, transformer);
         return this;
     }
 
     public ApiEndpoint head(final MethodDescriptor.Builder descriptorBuilder, String acceptType, Route route, ResponseTransformer transformer) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.HEAD, descriptorBuilder);
-        swagger.getSpark().head(swagger.getApiPath() + descriptor.getPath(), acceptType, route, transformer);
+        swagger.getSpark().head(swagger.getServiceName() + descriptor.getPath(), acceptType, route, transformer);
         return this;
     }
 
     public ApiEndpoint connect(final MethodDescriptor.Builder descriptorBuilder, Route route, ResponseTransformer transformer) {
         MethodDescriptor descriptor = bindDescription(null, descriptorBuilder);
-        swagger.getSpark().connect(swagger.getApiPath() + descriptor.getPath(), route, transformer);
+        swagger.getSpark().connect(swagger.getServiceName() + descriptor.getPath(), route, transformer);
         return this;
     }
 
     public ApiEndpoint connect(final MethodDescriptor.Builder descriptorBuilder, String acceptType, Route route, ResponseTransformer transformer) {
         MethodDescriptor descriptor = bindDescription(null, descriptorBuilder);
-        swagger.getSpark().connect(swagger.getApiPath() + descriptor.getPath(), acceptType, route, transformer);
+        swagger.getSpark().connect(swagger.getServiceName() + descriptor.getPath(), acceptType, route, transformer);
         return this;
     }
 
     public ApiEndpoint trace(final MethodDescriptor.Builder descriptorBuilder, Route route, ResponseTransformer transformer) {
         MethodDescriptor descriptor = bindDescription(null, descriptorBuilder);
-        swagger.getSpark().trace(swagger.getApiPath() + descriptor.getPath(), route, transformer);
+        swagger.getSpark().trace(swagger.getServiceName() + descriptor.getPath(), route, transformer);
         return this;
     }
 
     public ApiEndpoint trace(final MethodDescriptor.Builder descriptorBuilder, String acceptType, Route route, ResponseTransformer transformer) {
         MethodDescriptor descriptor = bindDescription(null, descriptorBuilder);
-        swagger.getSpark().trace(swagger.getApiPath() + descriptor.getPath(), acceptType, route, transformer);
+        swagger.getSpark().trace(swagger.getServiceName() + descriptor.getPath(), acceptType, route, transformer);
         return this;
     }
 
     public ApiEndpoint options(final MethodDescriptor.Builder descriptorBuilder, Route route, ResponseTransformer transformer) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.OPTIONS, descriptorBuilder);
-        swagger.getSpark().options(swagger.getApiPath() + descriptor.getPath(), route, transformer);
+        swagger.getSpark().options(swagger.getServiceName() + descriptor.getPath(), route, transformer);
         return this;
     }
 
     public ApiEndpoint options(final MethodDescriptor.Builder descriptorBuilder, String acceptType, Route route, ResponseTransformer transformer) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.OPTIONS, descriptorBuilder);
-        swagger.getSpark().options(swagger.getApiPath() + descriptor.getPath(), acceptType, route, transformer);
+        swagger.getSpark().options(swagger.getServiceName() + descriptor.getPath(), acceptType, route, transformer);
         return this;
     }
 
     public ApiEndpoint patch(final MethodDescriptor.Builder descriptorBuilder, Route route, ResponseTransformer transformer) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.PATCH, descriptorBuilder);
-        swagger.getSpark().patch(swagger.getApiPath() + descriptor.getPath(), route, transformer);
+        swagger.getSpark().patch(swagger.getServiceName() + descriptor.getPath(), route, transformer);
         return this;
     }
 
     public ApiEndpoint patch(final MethodDescriptor.Builder descriptorBuilder, String acceptType, Route route, ResponseTransformer transformer) {
         MethodDescriptor descriptor = bindDescription(HttpMethod.PATCH, descriptorBuilder);
-        swagger.getSpark().patch(swagger.getApiPath() + descriptor.getPath(), acceptType, route, transformer);
+        swagger.getSpark().patch(swagger.getServiceName() + descriptor.getPath(), acceptType, route, transformer);
         return this;
     }
 }

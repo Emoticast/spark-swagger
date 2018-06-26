@@ -33,6 +33,7 @@ public class SparkSwagger {
     private static final Logger LOGGER = LoggerFactory.getLogger(SparkSwagger.class);
 
     public static final String CONF_FILE_NAME = "spark-swagger.conf";
+    private String serviceName;
     private String apiPath;
     private Swagger swagger;
     private Service spark;
@@ -44,6 +45,7 @@ public class SparkSwagger {
         this.version = version;
         this.swagger = new Swagger();
         this.config = config;
+        this.serviceName = config.getServiceName();
         this.apiPath = this.config.getBasePath();
         this.swagger.setBasePath(this.apiPath);
         this.swagger.setExternalDocs(ExternalDocs.newBuilder().build());
@@ -236,5 +238,9 @@ public class SparkSwagger {
             info.setLicense(license);
         }
         return info;
+    }
+
+    public String getServiceName() {
+        return serviceName;
     }
 }
