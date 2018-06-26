@@ -32,7 +32,7 @@ object SparkSwaggerTest {
 
             swagger
                     .endpoint(EndpointDescriptor.endpointPath("/hello")) { _, _ -> }
-                    .get(MethodDescriptor.path("/there")
+                    .post(MethodDescriptor.path("/there")
                             .withQueryParam(ParameterDescriptor().apply {
                                 name = "pathname"
                                 description = "the description"
@@ -41,6 +41,7 @@ object SparkSwaggerTest {
                                 name = "headername"
                                 description = "the description"
                             })
+                            .withRequestType(MyFoo::class)
                             .withResponseType(DefinitionsFactoryTest.ClassWithCollection::class)) { a, b -> "response" }
 
             service.get("/foo") { _, _ -> "hey" }

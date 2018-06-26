@@ -74,7 +74,7 @@ object DefinitionsFactory {
             fieldClass.java == Number::class.java -> DecimalProperty()
             fieldClass.java == Double::class.java || fieldClass == Double::class.javaPrimitiveType -> DoubleProperty()
             fieldClass.java == Float::class.java || fieldClass == Float::class.javaPrimitiveType -> FloatProperty()
-            fieldClass.java == Int::class.java || fieldClass == Int::class.javaPrimitiveType || fieldClass == Integer::class.java -> IntegerProperty()
+            fieldClass.java == Int::class.java || fieldClass == Int::class.javaPrimitiveType || fieldClass.java == Integer::class.java -> IntegerProperty()
             fieldClass.java == Long::class.java || fieldClass == Long::class.javaPrimitiveType -> LongProperty()
             fieldClass.java == String::class.java -> StringProperty()
             fieldClass.java == UUID::class.java -> UUIDProperty()

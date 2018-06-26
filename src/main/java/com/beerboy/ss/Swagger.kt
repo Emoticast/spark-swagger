@@ -431,6 +431,7 @@ class Swagger {
 
                             val requestBody = BodyParameter()
                             requestBody.description("Body object description")
+                            requestBody.name = methodDescriptor.requestType?.simpleName
                             requestBody.required = true
                             requestBody.schema = model
                             op.addParameter(requestBody)
