@@ -23,7 +23,8 @@ object SparkSwaggerTest {
                     description = "A test",
                     title = "Test",
                     host = "localhost:3000",
-                    basePath = "/test",
+                    basePath = "",
+                    serviceName = "barstool",
                     theme = Theme.MATERIAL,
                     defaultModelExpandDepth = 10,
                     docPath = "/doc"

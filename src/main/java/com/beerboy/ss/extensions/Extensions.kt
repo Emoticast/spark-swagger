@@ -1,4 +1,4 @@
-package com.emoticast.extensions
+package com.beerboy.ss.extensions
 
 import com.google.gson.Gson
 import org.eclipse.jetty.util.UrlEncoded

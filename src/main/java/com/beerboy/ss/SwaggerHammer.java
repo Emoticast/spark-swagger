@@ -33,7 +33,7 @@ public class SwaggerHammer {
     public void prepareUi(final Config config, Swagger swagger) throws IOException {
         LOGGER.debug("Spark-Swagger: Start compiling Swagger UI");
 
-        String uiFolder = SwaggerHammer.getUiFolder(config.getBasePath());
+        String uiFolder = SwaggerHammer.getUiFolder(config.getServiceName() + config.getDocPath());
 
         // 1 - Extract UI/Templates folder to a temporary folder
         extractUi(uiFolder);

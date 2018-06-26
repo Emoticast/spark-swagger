@@ -54,8 +54,9 @@ public class SparkSwagger {
 
     private void configDocRoute() {
         // Configure static mapping
-        String baseUiFolder = SwaggerHammer.getUiFolder(this.apiPath);
-        String uiFolder = baseUiFolder.replaceAll(this.apiPath, "");
+        String basePath = config.getServiceName() + config.getDocPath();
+        String baseUiFolder = SwaggerHammer.getUiFolder(basePath);
+        String uiFolder = baseUiFolder.replaceAll(basePath, "");
         SwaggerHammer.createDir(SwaggerHammer.getSwaggerUiFolder());
         SwaggerHammer.createDir(uiFolder);
         spark.externalStaticFileLocation(uiFolder);
