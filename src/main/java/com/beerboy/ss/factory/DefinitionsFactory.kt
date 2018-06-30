@@ -7,9 +7,11 @@ import com.beerboy.ss.model.properties.*
 import java.io.File
 import java.util.*
 import kotlin.reflect.KCallable
+import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmErasure
 
 /**
@@ -27,18 +29,31 @@ object DefinitionsFactory {
             model.type = ModelImpl.OBJECT
             definitions[type.jvmErasure.simpleName!!] = model
 
-            val refDefinitions = parseProperties(model, type.jvmErasure.declaredMemberProperties)
+            val refDefinitions = parseProperties(model, type.jvmErasure)
             definitions.putAll(refDefinitions)
         }
         return definitions
     }
 
-    private fun parseProperties(model: ModelImpl, fields: Collection<KCallable<*>>): Map<String, Model> {
+    private fun parseProperties(model: ModelImpl, klass: KClass<*>): Map<String, Model> {
         val refDefinitions = HashMap<String, Model>()
+
+        val fields: Collection<KCallable<*>> = klass.declaredMemberProperties
 
         for (field in fields) {
             if (isViable(field)) {
                 val property = createProperty(field.returnType)
+
+                klass.primaryConstructor?.parameters?.forEach {
+                    if (it.name == field.name) {
+                        it.annotations.forEach {
+                            if (it is Description) {
+                                property.description = it.value
+                            }
+                        }
+
+                    }
+                }
 
                 model.addProperty(field.name, property)
 
@@ -130,3 +145,7 @@ object DefinitionsFactory {
 
     private fun getCollectionType(collectionField: KType?): KType = collectionField?.arguments?.get(0)?.type!!
 }
+
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class Description(val value: String)

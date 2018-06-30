@@ -6,6 +6,7 @@ import com.beerboy.ss.descriptor.EndpointDescriptor
 import com.beerboy.ss.descriptor.MethodDescriptor
 import com.beerboy.ss.descriptor.ParameterDescriptor
 import com.beerboy.ss.factory.DefinitionsFactoryTest
+import com.beerboy.ss.factory.Description
 import org.slf4j.LoggerFactory
 
 object SparkSwaggerTest {
@@ -53,5 +54,5 @@ object SparkSwaggerTest {
     }
 }
 
-data class MyFoo(val user: String, val count: Int?)
+data class MyFoo(@Description("The user") val users: String, @Description("the count") val count: Int?)
 
