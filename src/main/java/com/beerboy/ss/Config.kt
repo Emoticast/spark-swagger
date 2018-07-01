@@ -1,11 +1,14 @@
 package com.beerboy.ss
 
+import ch.qos.logback.classic.Level
 import com.beerboy.ss.model.Scheme
 
 data class Config(
         val description: String,
         val title: String,
         val host: String,
+        val port: Int = 3000,
+        val logLevel: Level,
         val basePath: String? = null,
         val serviceName: String,
         val docPath: String,
