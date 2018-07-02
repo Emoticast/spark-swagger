@@ -15,6 +15,7 @@ class MethodDescriptor {
     var method: HttpMethod? = null
     var path: String? = null
     var description: String? = null
+    var summary: String? = null
     var requestType: KClass<*>? = null
     var isRequestAsCollection: Boolean = false
     var responseType: KClass<*>? = null
@@ -31,6 +32,7 @@ class MethodDescriptor {
         private var method: HttpMethod? = null
         private var path: String? = null
         private var description: String? = null
+        private var summary: String? = null
         private var requestType: KClass<*>? = null
         private var requestAsCollection: Boolean = false
         private var responseType: KClass<*>? = null
@@ -55,6 +57,11 @@ class MethodDescriptor {
 
         fun withDescription(description: String): Builder {
             this.description = description
+            return this
+        }
+
+        fun withSummary(summary: String): Builder {
+            this.summary = summary
             return this
         }
 
@@ -160,6 +167,7 @@ class MethodDescriptor {
             methodDescriptor.method = method
             methodDescriptor.path = path
             methodDescriptor.description = description
+            methodDescriptor.summary = summary
             methodDescriptor.requestType = requestType
             methodDescriptor.isRequestAsCollection = requestAsCollection
             methodDescriptor.responseType = responseType
