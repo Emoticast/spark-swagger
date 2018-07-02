@@ -402,6 +402,7 @@ class Swagger {
                         val op = Operation()
                         op.tag(endpoint.endpointDescriptor.tag.name)
                         op.description(methodDescriptor.description)
+                        op.summary(methodDescriptor.summary)
 
                         val parameters = ParamsFactory.create(methodDescriptor.path, methodDescriptor.parameters)
                         op.parameters = parameters
