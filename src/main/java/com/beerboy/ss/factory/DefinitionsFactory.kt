@@ -1,7 +1,6 @@
 package com.beerboy.ss.factory
 
 import com.beerboy.spark.typify.spec.IgnoreSpec
-import com.beerboy.ss.extensions.Sealed
 import com.beerboy.ss.model.Model
 import com.beerboy.ss.model.ModelImpl
 import com.beerboy.ss.model.properties.*
@@ -95,7 +94,7 @@ object DefinitionsFactory {
             fieldClass == Long::class -> LongProperty()
             fieldClass == String::class -> StringProperty()
             fieldClass == UUID::class -> UUIDProperty()
-            Sealed::class.java.isAssignableFrom(fieldClass.java) && fieldClass.isSealed -> {
+            fieldClass.isSealed -> {
                 SealedProperty(fieldClass.simpleName!!, fieldClass)
             }
             fieldClass.java.isArray || Collection::class.java.isAssignableFrom(fieldClass.java) -> {

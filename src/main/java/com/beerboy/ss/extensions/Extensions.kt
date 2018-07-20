@@ -17,7 +17,3 @@ val Any.json: String get() = Gson().toJson(this)
 val String.urlEncoded: String get() = UrlEncoded.encodeString(this)
 inline fun <reified T : Any> String.parseJson() :T  = Gson().fromJson(this, T::class.java)
 fun <T : Any> String.parseJson(klass: KClass<T>) :T  = Gson().fromJson(this, klass.java)
-
-abstract class Sealed {
-    val type: String = this::class.simpleName!!
-}
