@@ -8,6 +8,7 @@ import com.beerboy.ss.descriptor.ParameterDescriptor
 import com.beerboy.ss.factory.DefinitionsFactoryTest
 import com.beerboy.ss.factory.Description
 import org.slf4j.LoggerFactory
+import java.util.*
 
 object SparkSwaggerTest {
 
@@ -28,6 +29,7 @@ object SparkSwaggerTest {
                     serviceName = "barstool",
                     theme = Theme.MATERIAL,
                     defaultModelExpandDepth = 10,
+                    logLevel = Level.INFO,
                     docPath = "/doc"
             ))
 
@@ -54,5 +56,9 @@ object SparkSwaggerTest {
     }
 }
 
-data class MyFoo(@Description("The user") val users: String, @Description("the count") val count: Int?)
+data class MyFoo(
+        @Description("The user") val uuid: UUID,
+        @Description("The user") val long: Long,
+        @Description("The user") val users: String,
+        @Description("the count") val count: Int?)
 

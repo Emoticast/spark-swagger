@@ -756,7 +756,7 @@ object PropertyBuilder {
                             val (_enum) = property
                             for (value in values) {
                                 try {
-                                    property.withEnum(value)
+//                                    property.withEnum(value)
                                 } catch (e: Exception) {
                                     // continue
                                 }
