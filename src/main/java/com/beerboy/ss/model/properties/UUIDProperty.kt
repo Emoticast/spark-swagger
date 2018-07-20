@@ -8,6 +8,6 @@ data class UUIDProperty(
         val enum: MutableList<String>? = null) : AbstractProperty("uuid", "string"), Property {
 
     companion object {
-        fun isType(type: String, format: String): Boolean = "string" == type && "uuid" == format
+        fun isType(type: String, format: String?): Boolean = "string" == type && "uuid" == format
     }
 }

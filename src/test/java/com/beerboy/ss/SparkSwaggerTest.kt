@@ -5,6 +5,7 @@ import ch.qos.logback.classic.Logger
 import com.beerboy.ss.descriptor.EndpointDescriptor
 import com.beerboy.ss.descriptor.MethodDescriptor
 import com.beerboy.ss.descriptor.ParameterDescriptor
+import com.beerboy.ss.extensions.Sealed
 import com.beerboy.ss.factory.DefinitionsFactoryTest
 import com.beerboy.ss.factory.Description
 import org.slf4j.LoggerFactory
@@ -56,7 +57,18 @@ object SparkSwaggerTest {
     }
 }
 
+sealed class Foo: Sealed() {
+    data class Bar(val x: String): Foo()
+    data class Yo(val y: Int): Foo()
+}
+
 data class MyFoo(
+        val foo: Foo,
+        val x: DefinitionsFactoryTest.SimpleClass,
+        val afloat: Float,
+        val abool: Boolean,
+        val aDate: Date,
+        val classWithList: DefinitionsFactoryTest.ClassWithCollection,
         @Description("The user") val uuid: UUID,
         @Description("The user") val long: Long,
         @Description("The user") val users: String,

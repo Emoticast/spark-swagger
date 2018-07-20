@@ -1,9 +1,11 @@
 package com.beerboy.ss.factory
 
 import com.beerboy.spark.typify.spec.IgnoreSpec
+import com.beerboy.ss.extensions.Sealed
 import com.beerboy.ss.model.Model
 import com.beerboy.ss.model.ModelImpl
 import com.beerboy.ss.model.properties.*
+import com.beerboy.ss.model.utils.PropertyModelConverter
 import java.io.File
 import java.util.*
 import kotlin.reflect.KCallable
@@ -35,7 +37,7 @@ object DefinitionsFactory {
         return definitions
     }
 
-    private fun parseProperties(model: ModelImpl, klass: KClass<*>): Map<String, Model> {
+    fun parseProperties(model: ModelImpl, klass: KClass<*>): Map<String, Model> {
         val refDefinitions = HashMap<String, Model>()
 
         val fields: Collection<KCallable<*>> = klass.declaredMemberProperties
@@ -93,6 +95,9 @@ object DefinitionsFactory {
             fieldClass == Long::class -> LongProperty()
             fieldClass == String::class -> StringProperty()
             fieldClass == UUID::class -> UUIDProperty()
+            Sealed::class.java.isAssignableFrom(fieldClass.java) && fieldClass.isSealed -> {
+                SealedProperty(fieldClass.simpleName!!, fieldClass)
+            }
             fieldClass.java.isArray || Collection::class.java.isAssignableFrom(fieldClass.java) -> {
                 val property = ArrayProperty()
                 property.items = getCollectionProperty(fieldType)
@@ -100,9 +105,11 @@ object DefinitionsFactory {
             }
             File::class.java.isAssignableFrom(fieldType.jvmErasure.java) -> FileProperty()
             else -> {
-                val property = RefProperty()
-                property.`$ref` = "#/definitions/" + fieldType.jvmErasure.simpleName
-                property
+                val property = ObjectProperty()
+                val model = ModelImpl()
+                model.type = ModelImpl.OBJECT
+                parseProperties(model, fieldType.jvmErasure)
+                PropertyModelConverter().modelToProperty(model)!!
             }
         }.apply {
             required = !fieldType.isMarkedNullable

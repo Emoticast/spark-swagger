@@ -420,7 +420,7 @@ object PropertyBuilder {
         },
         UUID(UUIDProperty::class.java) {
             override fun isType(type: String, format: String?): Boolean {
-                return UUIDProperty.isType(type, format!!)
+                return UUIDProperty.isType(type, format)
             }
 
             override fun create(): UUIDProperty {

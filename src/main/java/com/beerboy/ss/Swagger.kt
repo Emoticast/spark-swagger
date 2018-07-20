@@ -25,7 +25,7 @@ import kotlin.reflect.full.starProjectedType
 class Swagger {
 
     // getter & setters
-    var swagger: String? = "2.0"
+    var openapi: String? = "3.0.0"
     var info: Info? = null
     var host: String? = null
     public var basePath: String? = null
@@ -514,7 +514,7 @@ class Swagger {
         result = prime * result + if (schemes == null) 0 else schemes!!.hashCode()
         result = prime * result + if (security == null) 0 else security!!.hashCode()
         result = prime * result + if (securityDefinitions == null) 0 else securityDefinitions!!.hashCode()
-        result = prime * result + if (swagger == null) 0 else swagger!!.hashCode()
+        result = prime * result + if (openapi == null) 0 else openapi!!.hashCode()
         result = prime * result + if (tags == null) 0 else tags!!.hashCode()
         result = prime * result + if (vendorExtensions == null) 0 else vendorExtensions!!.hashCode()
         return result
@@ -622,11 +622,11 @@ class Swagger {
         } else if (securityDefinitions != other.securityDefinitions) {
             return false
         }
-        if (swagger == null) {
-            if (other.swagger != null) {
+        if (openapi == null) {
+            if (other.openapi != null) {
                 return false
             }
-        } else if (swagger != other.swagger) {
+        } else if (openapi != other.openapi) {
             return false
         }
         if (tags == null) {

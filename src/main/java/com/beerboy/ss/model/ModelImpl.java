@@ -6,9 +6,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import javax.xml.bind.annotation.XmlType;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.bind.annotation.XmlType;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlType(propOrder = {"type", "required", "discriminator", "properties"})

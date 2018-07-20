@@ -1,5 +1,7 @@
 package com.beerboy.ss.factory
 
+import com.beerboy.ss.Foo
+import com.beerboy.ss.model.utils.PropertyModelConverter
 import com.google.gson.Gson
 import org.junit.Assert
 import org.junit.Test
@@ -23,8 +25,8 @@ class DefinitionsFactoryTest {
 
     @Test
     fun `creates a definition for a class with collection`() {
-        val map = DefinitionsFactory.create(ClassWithCollection::class.createType())
+        val map = PropertyModelConverter().propertyToModel(DefinitionsFactory.createProperty(Foo::class.createType()))
 
-//        println(Gson().toJson(map))
+        println(Gson().toJson(map))
     }
 }
